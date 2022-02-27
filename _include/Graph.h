@@ -50,32 +50,37 @@ Graph<V>::Graph(vector<Edge<V>> const &edges) {
 
 		cout << src << (nodeExists ? " exists" : " does not exist") << endl;
 
+		//modify this to create priority queue
 		if (nodeExists) {
-			//node at the end of list connected to vector |  Node  |->... |  Node  |->nullptr
-			Node<V> *curr = adjListV.at(src);			//if the src value already exists in the adj list,
-														//advance through the LL at src and place
-														//a new Node at the end with dest, weight
-			while (curr->getNextNode() != nullptr)
-				curr = curr->getNextNode();
+			Node<V> *curr = adjListV.at(src);
+			//if node has lower weight than first node in the LL
+			if (weight < curr->getNodeWeight())
+				Node<V>* temp = new Node<V>(dest, weight, curr);
 
-			curr->setNextNode(new Node<V>(dest, weight));	
-			cout << "--> "<< dest << " added." << endl;
+			//otherwise, advance until spot is found
+			else {
+				while (curr->getNextNode() != nullptr) {
+					if (curr->getNextNode()->getNodeWeight() > weight)	
+						break;
+					else
+						curr = curr->getNextNode();
+				}
+				Node<V>* temp = new Node<V>(dest, weight, curr->getNextNode());
+				curr->setNextNode(temp);
+			}
 		}
 		else {
-			//add node to vector |  Node  |->nullptr
-			adjListV.push_back(new Node<V>(src));			//create new Node in the adjacency list
-															//if src value doesn't already exist
-															
-			//add associated destination to the node |  Node  |->|  Node  |->nullptr
+			//if first node
+			adjListV.push_back(new Node<V>(src));			
 			Node<V> *curr = adjListV.at(src);
-			curr->setNextNode(new Node<V>(dest, weight));	//here, edgeWeight is used for Node weight
+			curr->setNextNode(new Node<V>(dest, weight));	
 			cout << "new node and destination added." << endl;
 		}
 	}
 }
 
 template<class V>
-void Graph<V>::calculateSP(const V& u, const V& w) {
+void Graph<V>::calculateSP(const V& s, const V& t) {
 
 	bool visited[no_nodes];		//array of boolean values... visited or not
 	int distance[no_nodes];		//array of distances, which are weights in this case
@@ -107,26 +112,22 @@ void Graph<V>::calculateSP(const V& u, const V& w) {
 		visited[k] = false;
 		distance[k] = inf;
 	}
-	distance[u] = 0;												//u is starting node to find all paths from
-																	//u's distance to itself = 0
+	distance[s] = 0;												//s is starting node to find all paths from
+																	//s's distance to itself = 0
 
-	for (int count = 0; count < no_nodes; count++){					//this can be simplified to
-																	//"count < no_nodes - 1" because the
-																	//last iteration occurs with all members
-																	//of "visited[]" as true, making the inner
-																	//loop unnecessary
+	for (int count = 0; count < no_nodes; count++){					
 
 		int v = findSmallestUnvisitedNode(visited, distance);		//v is to be added next
 		visited[v] = true;											//add v to visited nodes
 
-		if (v == w) {
-			cout << "Lowest cost path from " << u << " to " << w << ": " << distance[v] << endl;
+		if (v == t) {
+			cout << "Lowest cost path from " << s << " to " << t << ": " << distance[v] << endl;
 			break;
 		}
 
 		for (int i = 0; i < no_nodes; i++){
-			/*Update distance[v] if not in dest and there is a path from src to v through u that has 
-			distance minimum than current value of dist[v]*/
+			/*Update distance[v] if not in dest and there is a path from src to v through adj_matrix[v][i] that has 
+			distance less than current value of dist[v]*/
 		
 			if (!visited[i] && adj_matrix[v][i] != inf && distance[v] != inf)
 				if(distance[v] + adj_matrix[v][i] < distance[i])
@@ -135,9 +136,7 @@ void Graph<V>::calculateSP(const V& u, const V& w) {
 	}
 }
 
-/*
 
-*/
 template<class V>
 int Graph<V>::findSmallestUnvisitedNode(bool visited[], int distance[]) {
 		int min = inf, smallest_weight_node;		//same as int min = inf; int smallest_weight_node;
