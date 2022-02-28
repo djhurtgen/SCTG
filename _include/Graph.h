@@ -26,6 +26,7 @@ public:
 	void printAdjMatrix() const;
 };
 
+
 //constructor
 template<class V>
 Graph<V>::Graph(vector<Edge<V>> const &edges) {
@@ -78,6 +79,7 @@ Graph<V>::Graph(vector<Edge<V>> const &edges) {
 		}
 	}
 }
+
 
 template<class V>
 void Graph<V>::calculateSP(const V& s, const V& t) {
