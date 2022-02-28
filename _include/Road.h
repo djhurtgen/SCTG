@@ -1,33 +1,33 @@
-#ifndef _EDGE
-#define _EDGE
+#ifndef _ROAD
+#define _ROAD
 
 #include <iostream>
 using namespace std;
 
 template <class V>
-class Edge {
+class Road {
 	V src;
 	V dst;
-	int edgeWeight;
+	int roadWeight;
 	
 
 public:
-	Edge() {
+	Road() {
 		src = 0;
 		dst = 0;
-		edgeWeight = 0;
+		roadWeight = 0;
 	}
 
-	Edge(const V& s, const V& d) {
+	Road(const V& s, const V& d) {
 		src = s;
 		dst = d;
-		edgeWeight = 0;
+		roadWeight = 0;
 	}
 
-	Edge(const V& s, const V& d, const int& w) {
+	Road(const V& s, const V& d, const int& w) {
 		src = s;
 		dst = d;
-		edgeWeight = w;
+		roadWeight = w;
 	}
 
 	void setSrcDst(const V& s, const V& d) {
@@ -37,11 +37,11 @@ public:
 	void setSrcDstWeight(const V& s, const V& d, const int& w) {
 		src = s;
 		dst = d;
-		edgeWeight = w;
+		roadWeight = w;
 	}
 
 	void setWeight(const V& w) {
-		edgeWeight = w;
+		roadWeight = w;
 	}
 
 	V getSrc() const {
@@ -53,7 +53,7 @@ public:
 	}
 	
 	int getWeight() const {
-		return edgeWeight;
+		return roadWeight;
 	}
 
 };
