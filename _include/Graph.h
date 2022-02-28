@@ -21,7 +21,8 @@ public:
 	//Constructor (populates graph)
 	Graph(vector<Edge<V>> const &edges);
 	void calculateSP(const V&, const V&);
-	int findSmallestUnvisitedNode(bool[], int[]);
+	int dequeue(int& head);
+	//int findSmallestUnvisitedNode(bool[], int[]);
 	void printAdjList() const;
 	void printAdjMatrix() const;
 };
@@ -112,9 +113,23 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 		visited[k] = false;
 		distance[k] = inf;
 	}
-	distance[s] = 0;												//s is starting node to find all paths from
-																	//s's distance to itself = 0
 
+	distance[s] = 0;
+
+	//here I need the popped values from the adj list to be entered into distance[] at the appropriate place
+	int& h;
+	int smallest_weight = inf;
+	h = distance[s];
+	for (int count = 0; count < no_nodes; count++) {
+		distance[h] = dequeue(h);
+		if (distance[h] < smallest_weight) {
+			smallest_weight = distance[h];
+		}
+
+	}
+
+
+	/*
 	for (int count = 0; count < no_nodes; count++){					
 
 		int v = findSmallestUnvisitedNode(visited, distance);		//v is to be added next
@@ -126,17 +141,15 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 		}
 
 		for (int i = 0; i < no_nodes; i++){
-			/*Update distance[v] if not in dest and there is a path from src to v through adj_matrix[v][i] that has 
-			distance less than current value of dist[v]*/
-		
 			if (!visited[i] && adj_matrix[v][i] != inf && distance[v] != inf)
 				if(distance[v] + adj_matrix[v][i] < distance[i])
 					distance[i] = distance[v] + adj_matrix[v][i];
 		}
 	}
+	*/
 }
 
-
+/*
 template<class V>
 int Graph<V>::findSmallestUnvisitedNode(bool visited[], int distance[]) {
 		int min = inf, smallest_weight_node;		//same as int min = inf; int smallest_weight_node;
@@ -148,7 +161,16 @@ int Graph<V>::findSmallestUnvisitedNode(bool visited[], int distance[]) {
 		}
 		return smallest_weight_node;
 }
-
+*/
+template<class V>
+int Graph<V>::dequeue(int& h) {
+	Node<V>* root = adjListV.at(h);							
+	Node<V>* temp = root;
+	int result = temp->getNodeWeight();
+	root = root->getNextNode());
+	delete temp;
+	return result;
+}
 
 // print adjacency list representation of graph
 template<class V>

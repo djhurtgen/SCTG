@@ -8,11 +8,12 @@ class Node {
     V value;
 	int weight;
     Node<V> *next;
+
 public:
-    Node():value(nullptr), weight(0), next(nullptr){};
+    Node():value(nullptr), weight(0), next(nullptr) {};
 	Node(V& val) :value(val), weight(0), next(nullptr) {};
-	Node(V& val, int W):value(val), weight(W), next(nullptr){};
-    Node(V& val, int W, Node<V> *nextNode):value(val), weight(W), next(nextNode){};
+	Node(V& val, int W):value(val), weight(W), next(nullptr) {};
+    Node(V& val, int W, Node<V> *nextNode):value(val), weight(W), next(nextNode) {};
     
     Node<V>* getNextNode() const;
     void setNextNode(Node<V>*);
