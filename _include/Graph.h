@@ -20,7 +20,7 @@ class Graph
 public:
 	//Constructor (populates graph)
 	Graph(vector<Road<V>> const &roads);
-	int findSmallestUnvisitedNode(bool[], int[]);
+	int findLeastCongestedIntersection(bool[], int[]);
 	void calculateSP(const V&, const V&);
 	void printAdjList() const;
 	void printAdjMatrix() const;
@@ -119,7 +119,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 
 	for (int count = 0; count < no_intersections; count++){
 
-		int v = findSmallestUnvisitedNode(visited, distance);		//v is to be added next
+		int v = findLeastCongestedIntersection(visited, distance);		//v is to be added next
 		visited[v] = true;											//add v to visited nodes
 
 		if (v == t) {
@@ -137,7 +137,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 
 
 template<class V>
-int Graph<V>::findSmallestUnvisitedNode(bool visited[], int distance[]) {
+int Graph<V>::findLeastCongestedIntersection(bool visited[], int distance[]) {
 		int min = inf, smallest_weight_node;		//same as int min = inf; int smallest_weight_node;
 		for (int i = 0; i < no_intersections; i++){
 			if (!visited[i] && distance[i] <= min){

@@ -9,8 +9,6 @@
 using namespace std;
 using namespace chrono;
 
-typedef pair<int, int> Pair;
-
 // Graph Implementation using STL
 int main()
 {
@@ -70,6 +68,7 @@ int main()
 	auto duration = duration_cast<milliseconds>(stop - start);
 
 	cout << "Time for operation: " << duration.count() << " milliseconds" << endl;
+
 
 	system("pause");
 	return 0;

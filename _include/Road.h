@@ -9,6 +9,11 @@ class Road {
 	V src;
 	V dst;
 	int roadWeight;
+	//add...
+	//int no_cars
+	//float no_miles
+	//int avg_speed
+	//use calculateCF for roadWeight
 	
 
 public:
@@ -54,6 +59,12 @@ public:
 	
 	int getWeight() const {
 		return roadWeight;
+	}
+
+	float calculateCF(const int& no_cars, const float& miles, const int& avg_speed) {
+		float cf;
+		cf = (no_cars / 352 * miles) / avg_speed;
+		return cf;
 	}
 
 };
