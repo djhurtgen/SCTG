@@ -13,8 +13,10 @@ public:
     Intersection():value(nullptr), weight(0), next(nullptr) {};
     Intersection(V& val) :value(val), weight(0), next(nullptr) {};
     Intersection(V& val, int W):value(val), weight(W), next(nullptr) {};
-    Intersection(V& val, int W, Intersection<V> *nextIntersection):value(val), weight(W), next(nextIntersection) {};
+    Intersection(V& val, int W, Intersection<V> *nextIntersection):
+        value(val), weight(W), next(nextIntersection) {};
     
+
     Intersection<V>* getNextIntersection() const;
     void setNextIntersection(Intersection<V>*);
     V getIntersectionValue() const;

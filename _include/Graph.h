@@ -11,19 +11,26 @@ using namespace std;
 const int inf = 1000;
 const int no_intersections = 16;
 
+bool adjIntersectionsRemain;
+int leastWeightIntersection = 0;
+
 template<class V>
 class Graph
 {
-	vector<Intersection<V>*> adjListV;			//vector of Nodes									
-	int adj_matrix[no_intersections][no_intersections];	//2D mapping of congestion at intersections
+	vector<Intersection<V>*> adjListV;			//vector of Nodes
+	V begin = 0;
+	Intersection<V> *pathToDest = new Intersection<V>(begin);				
 
 public:
 	//Constructor (populates graph)
 	Graph(vector<Road<V>> const &roads);
-	int findLeastCongestedIntersection(bool[], int[]);
 	void calculateSP(const V&, const V&);
 	void printAdjList() const;
-	void printAdjMatrix() const;
+	void insertDummyIntersection(const int&);
+	int getSmallestAdjWeightValue(int) const;
+	int getSmallestAdjWeight(int) const;
+	void addToPath(const int&);
+	int goBack();
 };
 
 
@@ -84,68 +91,144 @@ Graph<V>::Graph(vector<Road<V>> const &roads) {
 template<class V>
 void Graph<V>::calculateSP(const V& s, const V& t) {
 
-	bool visited[no_intersections];		//array of boolean values... visited or not
-	int distance[no_intersections];		//array of distances, which are weights in this case
+	bool visited[no_intersections];			//array of boolean values... visited or not
+	int distance[no_intersections];			//array of distances, which are weights in this case
+	
 
-	//init adj_matrix, adj = 0, all others at inf
-	for (int i = 0; i < no_intersections; i++)
-		for (int j = 0; j < no_intersections; j++)
-			if (i == j) adj_matrix[i][j] = 0;
-			else adj_matrix[i][j] = inf;
-
-	//populate adj_matrix from adjListV with weight values
-	if (!adjListV.empty()) {
-		for (Intersection<V> *node : adjListV) {	//for each Node in adjListV
-			Intersection<V> *curr = node;
-
-			while(curr->getNextIntersection() != nullptr) {		//traverse its linked list and insert weights
-				adj_matrix[node->getIntersectionValue()][curr->getNextIntersection()->getIntersectionValue()] =
-					curr->getNextIntersection()->getIntersectionWeight();
-				curr = curr->getNextIntersection();
-			}
-		}
-	}
-
-	printAdjMatrix();
-
-	// calculate distance
-																	
 	for (int k = 0; k < no_intersections; k++) {
 		visited[k] = false;
 		distance[k] = inf;
 	}
 
+	visited[s] = true;
 	distance[s] = 0;
-
-	for (int count = 0; count < no_intersections; count++){
-
-		int v = findLeastCongestedIntersection(visited, distance);		//v is to be added next
-		visited[v] = true;											//add v to visited nodes
-
-		if (v == t) {
-			cout << "Lowest cost path from " << s << " to " << t << ": " << distance[v] << endl;
-			break;
-		}
-
-		for (int i = 0; i < no_intersections; i++){
-			if (!visited[i] && adj_matrix[v][i] != inf && distance[v] != inf)
-				if(distance[v] + adj_matrix[v][i] < distance[i])
-					distance[i] = distance[v] + adj_matrix[v][i];
-		}
+	
+	leastWeightIntersection = s;
+	Intersection<V>* root = pathToDest;
+	V begin = s;
+	root->setIntersectionValue(begin);
+	cout << "First intersection added to path." << endl;
+	
+	for (int i = 0; i < no_intersections; i++) {
+		insertDummyIntersection(i);
 	}
+	
+
+	while (leastWeightIntersection != t) {
+		int marked = inf;
+		
+		adjIntersectionsRemain = true;
+		while (adjIntersectionsRemain) {
+			//1st helper function returns smallestAdjWeight node value w/ leastWeightIntersection as parameter
+			int smallestAdjWeightValue = getSmallestAdjWeightValue(leastWeightIntersection);
+			cout << "Smallest weight intersection is: " << smallestAdjWeightValue << endl;
+			//2nd helper function returns smallestAdjWeight w/ leastWeightIntersection as parameter
+			int smallestAdjWeight = getSmallestAdjWeight(leastWeightIntersection);
+			cout << "Smallest weight is: " << smallestAdjWeight << endl;
+			//place weight in distance[] if less than current
+			if ((distance[leastWeightIntersection] + smallestAdjWeight < distance[smallestAdjWeightValue]) 
+				&& (visited[smallestAdjWeightValue] == false))
+				distance[smallestAdjWeightValue] = distance[leastWeightIntersection] + smallestAdjWeight;
+			if ((distance[smallestAdjWeightValue] < marked) && (visited[smallestAdjWeightValue] == false))
+				marked = smallestAdjWeightValue;
+		}
+		
+		//if there are no unvisited intersections from the current intersection, go back
+		if (marked == inf) {
+			marked = goBack();
+			//mark the current intersection as visited
+			visited[leastWeightIntersection] = true;
+			cout << "Going back" << endl;
+		}
+		cout << "Marked is: " << marked << endl;
+
+		//update leastWeightIntersection here from marked
+		if (visited[marked] == false) {
+			visited[marked] = true;
+			leastWeightIntersection = marked;
+			addToPath(marked);
+		}
+
+		else
+			leastWeightIntersection = marked;
+
+		cout << leastWeightIntersection << " is the new least weight intersection." << endl;
+	}
+	cout << "Lowest cost path from " << s << " to " << t << ": " << distance[leastWeightIntersection] << endl;
 }
 
 
 template<class V>
-int Graph<V>::findLeastCongestedIntersection(bool visited[], int distance[]) {
-		int min = inf, smallest_weight_node;		//same as int min = inf; int smallest_weight_node;
-		for (int i = 0; i < no_intersections; i++){
-			if (!visited[i] && distance[i] <= min){
-				min = distance[i];
-				smallest_weight_node = i;
-			}
-		}
-		return smallest_weight_node;
+void Graph<V>::insertDummyIntersection(const int &head) {
+	V dummy = inf;
+	Intersection<V>* curr = adjListV.at(head);
+	while (curr->getNextIntersection() != nullptr)
+		curr = curr->getNextIntersection();
+	curr->setNextIntersection(new Intersection<V>(dummy));
+}
+
+
+template<class V>
+int Graph<V>::getSmallestAdjWeightValue(int lwi) const {
+	Intersection<V>* root = adjListV.at(lwi);
+	Intersection<V>* curr = root->getNextIntersection();
+	int result = curr->getIntersectionValue();
+	return result;
+}
+
+
+template<class V>
+int Graph<V>::getSmallestAdjWeight(int lwi) const {
+	Intersection<V>* root = adjListV.at(lwi);
+	Intersection<V>* curr = root;
+	Intersection<V>* temp = root->getNextIntersection();
+
+	int result = temp->getIntersectionWeight();
+	
+	while (curr->getNextIntersection() != nullptr)
+		curr = curr->getNextIntersection();
+	root->setNextIntersection(temp->getNextIntersection());
+	curr->setNextIntersection(temp);
+	temp->setNextIntersection(nullptr);
+
+	//check for dummy node, place at end if present, change adjIntersections remain to false
+	if (root->getNextIntersection()->getIntersectionValue() == inf) {
+		//cout << "Hit the dummy node!" << endl;
+		Intersection<V>* curr1 = root;
+		Intersection<V>* temp1 = root->getNextIntersection();
+		while (curr1->getNextIntersection() != nullptr)
+			curr1 = curr1->getNextIntersection();
+		root->setNextIntersection(temp1->getNextIntersection());
+		curr1->setNextIntersection(temp1);
+		temp1->setNextIntersection(nullptr);
+		adjIntersectionsRemain = false;
+	}
+	return result;
+}
+
+
+template<class V>
+void Graph<V>::addToPath(const int &mrkd) {
+	V toPath = mrkd;
+	Intersection<V>* root = pathToDest;
+	Intersection<V>* curr = root;
+	while (curr->getNextIntersection() != nullptr)
+		curr->getNextIntersection();
+	curr->setNextIntersection(new Intersection<V>(toPath));
+	cout << toPath << " added to path" << endl;
+}
+
+
+template<class V>
+int Graph<V>::goBack() {
+	Intersection<V>* curr = pathToDest;
+	while (curr->getNextIntersection()->getNextIntersection() != nullptr)
+		curr->getNextIntersection();
+	int result = curr->getIntersectionValue();
+	Intersection<V>* temp = curr->getNextIntersection();
+	curr->setNextIntersection(nullptr);
+	delete temp;
+	return result;
 }
 
 
@@ -166,24 +249,5 @@ void Graph<V>::printAdjList() const {
 	}
 }
 
-
-// print adjacency matrix representation of graph
-template<class V>
-void Graph<V>::printAdjMatrix() const {
-	cout << endl << "Adjacency matrix..." << endl;
-	cout << "\t";
-	for (int i = 0; i < no_intersections; i++) {		//column headings are printed (0 - 4)
-		cout << i << "\t";
-	}
-	cout << endl;
-	for (int i = 0; i < no_intersections; i++) {
-		cout << i << "\t";						//row headings (0 - 4)
-		for (int j = 0; j < no_intersections; j++) {	//matrix values
-			if (adj_matrix[i][j] == inf) cout << static_cast<unsigned char>(236) << "\t";
-			else cout << adj_matrix[i][j] << "\t";
-		}
-		cout << endl;
-	}		
-}
 
 #endif
