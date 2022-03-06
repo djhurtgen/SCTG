@@ -12,14 +12,11 @@ const int inf = 1000;
 const int no_intersections = 16;
 
 bool adjIntersectionsRemain;
-int leastWeightIntersection = 0;
 
 template<class V>
 class Graph
 {
 	vector<Intersection<V>*> adjListV;			//vector of Nodes
-	V begin = 0;
-	Intersection<V> *pathToDest = new Intersection<V>(begin);				
 
 public:
 	//Constructor (populates graph)
@@ -29,8 +26,8 @@ public:
 	void insertDummyIntersection(const int&);
 	int getSmallestAdjWeightValue(int) const;
 	int getSmallestAdjWeight(int) const;
-	void addToPath(const int&);
-	int goBack();
+	void addToPath(const int&, Intersection<V>*);
+	int goBack(Intersection<V>*);
 };
 
 
@@ -93,7 +90,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 
 	bool visited[no_intersections];			//array of boolean values... visited or not
 	int distance[no_intersections];			//array of distances, which are weights in this case
-	
+	int leastWeightIntersection;
 
 	for (int k = 0; k < no_intersections; k++) {
 		visited[k] = false;
@@ -104,9 +101,8 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 	distance[s] = 0;
 	
 	leastWeightIntersection = s;
-	Intersection<V>* root = pathToDest;
-	V begin = s;
-	root->setIntersectionValue(begin);
+	V firstIntersection = s;
+	Intersection<V>* pathToDest = new Intersection<V>(firstIntersection);
 	cout << "First intersection added to path." << endl;
 	
 	for (int i = 0; i < no_intersections; i++) {
@@ -135,7 +131,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 		
 		//if there are no unvisited intersections from the current intersection, go back
 		if (marked == inf) {
-			marked = goBack();
+			marked = goBack(pathToDest);
 			//mark the current intersection as visited
 			visited[leastWeightIntersection] = true;
 			cout << "Going back" << endl;
@@ -146,7 +142,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 		if (visited[marked] == false) {
 			visited[marked] = true;
 			leastWeightIntersection = marked;
-			addToPath(marked);
+			addToPath(marked, pathToDest);
 		}
 
 		else
@@ -208,20 +204,20 @@ int Graph<V>::getSmallestAdjWeight(int lwi) const {
 
 
 template<class V>
-void Graph<V>::addToPath(const int &mrkd) {
-	V toPath = mrkd;
-	Intersection<V>* root = pathToDest;
+void Graph<V>::addToPath(const int &mrkd, Intersection<V>* path) {
+	V add_to_path = mrkd;
+	Intersection<V>* root = path;
 	Intersection<V>* curr = root;
 	while (curr->getNextIntersection() != nullptr)
 		curr->getNextIntersection();
-	curr->setNextIntersection(new Intersection<V>(toPath));
-	cout << toPath << " added to path" << endl;
+	curr->setNextIntersection(new Intersection<V>(add_to_path));
+	cout << add_to_path << " added to path" << endl;
 }
 
 
 template<class V>
-int Graph<V>::goBack() {
-	Intersection<V>* curr = pathToDest;
+int Graph<V>::goBack(Intersection<V>* path) {
+	Intersection<V>* curr = path;
 	while (curr->getNextIntersection()->getNextIntersection() != nullptr)
 		curr->getNextIntersection();
 	int result = curr->getIntersectionValue();
