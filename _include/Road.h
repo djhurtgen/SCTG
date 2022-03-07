@@ -46,7 +46,7 @@ public:
 		dst = d;
 	}
 	
-	void setSrcDstWeight(const V& s, const V& d, const int& c, const int& m, const int& v) {
+	void setAllParameters(const V& s, const V& d, const int& c, const int& m, const int& v) {
 		src = s;
 		dst = d;
 		no_cars = c;

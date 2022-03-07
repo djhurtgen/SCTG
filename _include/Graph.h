@@ -53,7 +53,7 @@ Graph<V>::Graph(vector<Road<V>> const &roads) {
 
 		std::cout << src << (nodeExists ? " exists" : " does not exist") << std::endl;
 
-		//modify this to create priority queue
+		//modified to create priority queue
 		if (nodeExists) {
 			Intersection<V> *curr = adjListV.at(src);
 			//if node has lower weight than first node in the LL
@@ -92,7 +92,7 @@ float Graph<V>::calculateCF(const int& c, const float& m, const int& v) {
 template<class V>
 void Graph<V>::calculateSP(const V& s, const V& t) {
 
-	bool visited[no_intersections];		//array of boolean values... visited or not
+	bool visited[no_intersections];			//array of boolean values... visited or not
 	float distance[no_intersections];		//array of distances, which are weights in this case
 
 	//init adj_matrix, adj = 0, all others at inf
