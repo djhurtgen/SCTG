@@ -11,12 +11,11 @@ using namespace std;
 const int inf = 1000;
 const int no_intersections = 16;
 
-bool adjIntersectionsRemain;
-
 template<class V>
 class Graph
 {
 	vector<Intersection<V>*> adjListV;			//vector of Nodes
+	bool adjIntersectionsRemain;
 
 public:
 	//Constructor (populates graph)
@@ -25,7 +24,7 @@ public:
 	void printAdjList() const;
 	void insertDummyIntersection(const int&);
 	int getSmallestAdjWeightValue(int) const;
-	int getSmallestAdjWeight(int) const;
+	int getSmallestAdjWeight(int);
 	void addToPath(const int&, Intersection<V>*);
 	int goBack(Intersection<V>*);
 };
@@ -174,7 +173,7 @@ int Graph<V>::getSmallestAdjWeightValue(int lwi) const {
 
 
 template<class V>
-int Graph<V>::getSmallestAdjWeight(int lwi) const {
+int Graph<V>::getSmallestAdjWeight(int lwi) {
 	Intersection<V>* root = adjListV.at(lwi);
 	Intersection<V>* curr = root;
 	Intersection<V>* temp = root->getNextIntersection();
