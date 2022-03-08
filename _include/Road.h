@@ -8,11 +8,11 @@ template <class V>
 class Road {
 	V src;
 	V dst;
-	//int roadWeight;
+	int roadWeight;
 	//add...
-	int no_cars;
-	float no_miles;
-	int avg_speed;
+	//int no_cars
+	//float no_miles
+	//int avg_speed
 	//use calculateCF for roadWeight
 	
 
@@ -20,38 +20,33 @@ public:
 	Road() {
 		src = 0;
 		dst = 0;
-		no_cars = 0;
-		no_miles = 0;
-		avg_speed = 0;
+		roadWeight = 0;
 	}
 
 	Road(const V& s, const V& d) {
 		src = s;
 		dst = d;
-		no_cars = 0;
-		no_miles = 0;
-		avg_speed = 0;
+		roadWeight = 0;
 	}
 
-	Road(const V& s, const V& d, const int& c, const int& m, const int& v) {
+	Road(const V& s, const V& d, const int& w) {
 		src = s;
 		dst = d;
-		no_cars = c;
-		no_miles = m;
-		avg_speed = v;
+		roadWeight = w;
 	}
 
 	void setSrcDst(const V& s, const V& d) {
 		src = s;
 		dst = d;
 	}
-	
-	void setSrcDstWeight(const V& s, const V& d, const int& c, const int& m, const int& v) {
+	void setSrcDstWeight(const V& s, const V& d, const int& w) {
 		src = s;
 		dst = d;
-		no_cars = c;
-		no_miles = m;
-		avg_speed = v;
+		roadWeight = w;
+	}
+
+	void setWeight(const V& w) {
+		roadWeight = w;
 	}
 
 	V getSrc() const {
@@ -62,16 +57,14 @@ public:
 		return dst;
 	}
 	
-	int getNumCars() const{
-		return no_cars;
-	}
-	
-	float getNumMiles() const{
-		return no_miles;
+	int getWeight() const {
+		return roadWeight;
 	}
 
-	int getAvgSpeed() const{
-		return avg_speed;
+	float calculateCF(const int& no_cars, const float& miles, const int& avg_speed) {
+		float cf;
+		cf = (no_cars / 352 * miles) / avg_speed;
+		return cf;
 	}
 };
 
