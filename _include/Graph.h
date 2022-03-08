@@ -20,11 +20,12 @@ class Graph
 public:
 	//Constructor (populates graph)
 	Graph(vector<Road<V>> const &roads);
+	float calculateCF(const int&, const float&, const int&);
 	void calculateSP(const V&, const V&);
 	void printAdjList() const;
 	int getNextAdjWeightValue(int) const;
-	int getNextAdjWeight(int);
-	int findLeastCongestedIntersection(bool[], int[]);
+	float getNextAdjWeight(int);
+	int findLeastCongestedIntersection(bool[], float[]);
 };
 
 
@@ -37,7 +38,8 @@ Graph<V>::Graph(vector<Road<V>> const &roads) {
 		bool nodeExists = false;
 		V src = road.getSrc();
 		V dest = road.getDst();
-		int weight = road.getWeight();
+		//calculate here
+		float weight = calculateCF(road.getNumCars(), road.getNumMiles(), road.getAvgSpeed());
 		cout << "adding: " << src << "----w(" << weight << ")----" << dest << endl;
 		
 
@@ -83,10 +85,18 @@ Graph<V>::Graph(vector<Road<V>> const &roads) {
 
 
 template<class V>
+float Graph<V>::calculateCF(const int& c, const float& m, const int& v) {
+	float cf;
+	cf = (c / (352 * m)) / v;
+	return cf;
+}
+
+
+template<class V>
 void Graph<V>::calculateSP(const V& s, const V& t) {
 
 	bool visited[no_intersections];			//array of boolean values... visited or not
-	int distance[no_intersections];			//array of distances, which are weights in this case
+	float distance[no_intersections];			//array of distances, which are weights in this case
 	int leastWeightIntersection;
 	vector<int> pathToDest[no_intersections];	//array of vectors for various paths
 
@@ -114,7 +124,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 			int nextAdjWeightValue = getNextAdjWeightValue(leastWeightIntersection);
 			cout << "Next intersection is: " << nextAdjWeightValue << endl;
 			//2nd helper function returns smallestAdjWeight w/ leastWeightIntersection as parameter
-			int nextAdjWeight = getNextAdjWeight(leastWeightIntersection);
+			float nextAdjWeight = getNextAdjWeight(leastWeightIntersection);
 			cout << "Weight is: " << nextAdjWeight << endl;
 			//place weight in distance[] if less than current
 			if ((distance[leastWeightIntersection] + nextAdjWeight < distance[nextAdjWeightValue])
@@ -157,12 +167,12 @@ int Graph<V>::getNextAdjWeightValue(int lwi) const {
 
 
 template<class V>
-int Graph<V>::getNextAdjWeight(int lwi) {
+float Graph<V>::getNextAdjWeight(int lwi) {
 	Intersection<V>* root = adjListV.at(lwi);
 	Intersection<V>* temp = root->getNextIntersection();
 	Intersection<V>* curr = temp->getNextIntersection();
 
-	int result = temp->getIntersectionWeight();
+	float result = temp->getIntersectionWeight();
 	
 	root->setNextIntersection(curr);
 	delete temp;
@@ -174,7 +184,7 @@ int Graph<V>::getNextAdjWeight(int lwi) {
 
 
 template<class V>
-int Graph<V>::findLeastCongestedIntersection(bool visited[], int distance[]) {
+int Graph<V>::findLeastCongestedIntersection(bool visited[], float distance[]) {
 	int min = inf, least_congested_intersection;
 	for (int i = 0; i < no_intersections; i++) {
 		if (!visited[i] && distance[i] <= min) {
