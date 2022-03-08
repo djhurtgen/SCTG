@@ -61,7 +61,7 @@ int main()
 	graph.printAdjList();
 	
 	// calculate shortest path from node s=0 to node t=10 
-	graph.calculateSP(0, 15);
+	graph.calculateSP(1, 12);
 	
 	auto stop = high_resolution_clock::now();
 
