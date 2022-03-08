@@ -138,14 +138,11 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 	cout << "Lowest cost path from " << s << " to " << t << ": " << distance[t] << endl;
 	
 	cout << "Path is ";
-	for (int i = 0; i < no_intersections; i++) {
-		if (i == t) {
-			for (int j = 0; j < pathToDest[i].size(); j++) {
-				cout << " --> " << pathToDest[i][j];
-			}
-			break;
-		}
+	
+	for (int j = 0; j < pathToDest[t].size(); j++) {
+		cout << " --> " << pathToDest[t][j];
 	}
+			
 	cout << endl;
 }
 
