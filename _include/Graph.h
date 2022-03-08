@@ -22,7 +22,6 @@ public:
 	Graph(vector<Road<V>> const &roads);
 	void calculateSP(const V&, const V&);
 	void printAdjList() const;
-	//void insertDummyIntersection(const int&);
 	int getNextAdjWeightValue(int) const;
 	int getNextAdjWeight(int);
 	int findLeastCongestedIntersection(bool[], int[]);
