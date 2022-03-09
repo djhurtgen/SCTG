@@ -99,11 +99,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 	float distance[no_intersections];			//array of distances, which are weights in this case
 	int leastWeightIntersection;
 	vector<int> pathToDest[no_intersections];	//array of vectors for various paths
-
-	for (int i = 0; i < no_intersections; i++) {
-		pathToDest[i].push_back(i);
-	}
-
+	
 	for (int j = 0; j < no_intersections; j++) {
 		visited[j] = false;
 		distance[j] = inf;
@@ -113,6 +109,9 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 	distance[s] = 0;
 	
 	leastWeightIntersection = s;
+
+	//update path at source; all paths will originate here
+	pathToDest[s].push_back(s);
 	cout << "First intersection added to path." << endl;
 
 	while (leastWeightIntersection != t) {
@@ -133,6 +132,7 @@ void Graph<V>::calculateSP(const V& s, const V& t) {
 				//update path
 				pathToDest[nextAdjWeightValue] = pathToDest[leastWeightIntersection];
 				pathToDest[nextAdjWeightValue].push_back(nextAdjWeightValue);
+				cout << "Path updated." << endl;
 			}
 			//mark least congested unvisited intersection in distance[]
 			marked = findLeastCongestedIntersection(visited, distance);

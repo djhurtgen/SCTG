@@ -60,7 +60,7 @@ int main()
 	// print adjacency list representation of graph
 	graph.printAdjList();
 	
-	// calculate shortest path from node s=0 to node t=10 
+	// calculate shortest path from node s=1 to node t=12 
 	graph.calculateSP(1, 12);
 	
 	auto stop = high_resolution_clock::now();
